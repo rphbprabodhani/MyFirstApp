@@ -1,98 +1,163 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  Image,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+// Expo: already included. Bare RN: npm i react-native-vector-icons
+// and change this import to 'react-native-vector-icons/MaterialIcons'
+import { MaterialIcons } from '@expo/vector-icons';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const user = {
+  name: 'Hirushi',
+  email: 'rphbprabodhani@nsbm.ac.lk',
+  points: 0,
+  // Replace with require('./assets/avatar.png') or your own image URL
+  avatar: 'https://api.dicebear.com/7.x/avataaars/png?seed=Diluka',
+};
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+export default function ProfileScreen({ onAddPress }) {
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={styles.safe}>
+      <StatusBar barStyle="light-content" backgroundColor="#000" />
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      {/* App bar */}
+      <View style={styles.appBar}>
+        <Text style={styles.appBarTitle}>My Profile</Text>
+      </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+      <View style={styles.body}>
+        {/* Avatar with verified tick */}
+        <View style={styles.avatarWrapper}>
+          <View style={styles.avatarCircle}>
+            <Image source={{ uri: user.avatar }} style={styles.avatarImage} />
+          </View>
+          <MaterialIcons
+            name="check"
+            size={44}
+            color="#00e000"
+            style={styles.tick}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        <View style={styles.divider} />
+
+        {/* Name */}
+        <Text style={styles.label}>Name</Text>
+        <Text style={styles.value}>{user.name}</Text>
+
+        {/* Email */}
+        <Text style={[styles.label, styles.section]}>Email</Text>
+        <View style={styles.row}>
+          <MaterialIcons name="email" size={22} color="#000" />
+          <Text style={[styles.value, styles.rowText]}>{user.email}</Text>
+        </View>
+
+        {/* Points */}
+        <Text style={[styles.label, styles.section]}>Points</Text>
+        <View style={styles.row}>
+          <MaterialIcons name="star" size={22} color="#000" />
+          <Text style={[styles.value, styles.rowText]}>{user.points}</Text>
+        </View>
+      </View>
+
+      {/* Floating action button */}
+      <TouchableOpacity style={styles.fab} activeOpacity={0.8} onPress={onAddPress}>
+        <MaterialIcons name="add" size={26} color="#fff" />
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safe: {
     flex: 1,
+    backgroundColor: '#f4f4f4',
+  },
+  appBar: {
+    height: 56,
+    backgroundColor: '#000',
+    alignItems: 'center',
     justifyContent: 'center',
+  },
+  appBarTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  body: {
+    paddingHorizontal: 14,
+    paddingTop: 12,
+  },
+  avatarWrapper: {
+    alignSelf: 'center',
+    width: 100,
+    height: 100,
+    marginBottom: 12,
+  },
+  avatarCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e58aa8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+  },
+  tick: {
+    position: 'absolute',
+    right: -6,
+    bottom: -4,
+  },
+  divider: {
+    height: 1.5,
+    backgroundColor: '#000',
+    marginBottom: 18,
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 6,
+  },
+  section: {
+    marginTop: 22,
+  },
+  value: {
+    fontSize: 15,
+    color: '#111',
+  },
+  row: {
     flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
   },
-  heroSection: {
+  rowText: {
+    marginLeft: 10,
+  },
+  fab: {
+    position: 'absolute',
+    right: 16,
+    bottom: 20,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
 });
